@@ -4,11 +4,13 @@ from numpy.matlib import empty
 
 # importing states data
 states_data = pandas.read_csv(r"50_states.csv")
+all_state = states_data["state"].to_list()
 # print(states_data)
 
 # Keeping an universal count
 count = 0
 guessed_states = []
+missed_states = []
 
 # setting up the screen
 screen = turtle.Screen()
@@ -29,8 +31,17 @@ while count < 50:
     if answer_state is None:
         break
 
+    if answer_state.title() == "Exit":
+        for state in all_state:
+            if state not in guessed_states:
+                missed_states.append(state)
+
+        new_data = pandas.DataFrame(missed_states)
+        new_data.to_csv("states_to_learn.csv")
+        print(missed_states)
+
     answer_state = answer_state.title()
-    if answer_state in states_data["state"].values and answer_state not in guessed_states:
+    if answer_state in all_state and answer_state not in guessed_states:
         guessed_states.append(answer_state)
         count += 1
 
@@ -47,11 +58,5 @@ while count < 50:
         writer.penup()
         writer.goto(x_cord, y_cord)
         writer.write(f"{answer_state}", align="center", font=("Arial", 12, "normal"))
-
-
-
-
-
-
 
 turtle.mainloop()
